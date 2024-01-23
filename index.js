@@ -80,6 +80,13 @@ async function run() {
       );
       res.send(result);
     });
+    // get user role
+    app.get("/user/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await userCollections.findOne(query);
+      res.send(result);
+    });
     // user logout
     app.get("/logout", async (req, res) => {
       try {
@@ -107,11 +114,19 @@ async function run() {
       const result = await roomsCollections.findOne(query);
       res.send(result);
     });
+    app.get("/rooms/:email", async (req, res) => {
+      const email = req.params.email;
+
+      const result = await roomsCollections
+        .find({ "host.email": email })
+        .toArray();
+      res.send(result);
+    });
     // create a room
     app.post("/room", verifyToken, async (req, res) => {
       const data = req.body;
       const result = await roomsCollections.insertOne(data);
-      console.log(result);
+      // console.log(result);
       res.send(result);
     });
   } finally {
